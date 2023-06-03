@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { BehaviorSubject, Subject, shareReplay } from 'rxjs';
 import { Recipe } from './recipe.model';
 
 @Injectable({
   providedIn: 'root',
 })
-export class RecipeService {
+export class RecipeService implements OnDestroy {
   constructor() {}
 
   private recipesSubject = new BehaviorSubject<Recipe[]>([
@@ -27,6 +27,11 @@ export class RecipeService {
 
   private selectedRecipeSubject = new Subject<Recipe>();
   selectedRecipe$ = this.selectedRecipeSubject.pipe(shareReplay(1));
+
+  ngOnDestroy() {
+    this.recipesSubject.complete();
+    this.selectedRecipeSubject.complete();
+  }
 
   addRecipe(recipe: Recipe) {
     this.recipesSubject.next([...this.recipesSubject.value, recipe]);

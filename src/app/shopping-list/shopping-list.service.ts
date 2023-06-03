@@ -1,11 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable, OnDestroy } from '@angular/core';
 import { Ingredient } from '../shared/ingredient.model';
 import { BehaviorSubject, shareReplay } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
 })
-export class ShoppingListService {
+export class ShoppingListService implements OnDestroy {
   private ingredientsSubject = new BehaviorSubject<Ingredient[]>([
     new Ingredient('Apples', 5),
     new Ingredient('Tomatoes', 10),
@@ -16,6 +16,10 @@ export class ShoppingListService {
   );
 
   constructor() {}
+
+  ngOnDestroy(): void {
+    this.ingredientsSubject.complete();
+  }
 
   addIngredient(ingredient: Ingredient) {
     this.ingredientsSubject.next([...this.ingredientsSubject.value, ingredient]);
