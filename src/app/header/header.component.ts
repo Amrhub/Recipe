@@ -7,11 +7,4 @@ import { Component, EventEmitter, Output } from '@angular/core';
 })
 export class HeaderComponent {
   collapsed = true;
-  activeLink = 'recipes';
-  @Output() navigationChanged = new EventEmitter<'recipes' | 'shopping-list'>();
-
-  onNavigationChanged(page: 'recipes' | 'shopping-list') {
-    this.activeLink = page;
-    this.navigationChanged.emit(page);
-  }
 }

@@ -1,6 +1,7 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject, shareReplay } from 'rxjs';
+import { BehaviorSubject, Subject, map, shareReplay } from 'rxjs';
 import { Recipe } from './recipe.model';
+import { Ingredient } from '../shared/ingredient.model';
 
 @Injectable({
   providedIn: 'root',
@@ -10,34 +11,48 @@ export class RecipeService implements OnDestroy {
 
   private recipesSubject = new BehaviorSubject<Recipe[]>([
     new Recipe(
-      'Test Recipe 1',
-      'This is simply a Test 1',
-      'https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Chicken-Tikka-99647a6.jpg?quality=90&resize=556,505'
+      'Tasty Schnitzel',
+      'A super-tasty Schnitzel - just awesome!',
+      'https://upload.wikimedia.org/wikipedia/commons/7/72/Schnitzel.JPG',
+      [new Ingredient('Meat', 1), new Ingredient('French Fries', 20)]
     ),
     new Recipe(
-      'Test Recipe 2',
-      'This is simply a Test 2',
-      'https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Chicken-Tikka-99647a6.jpg?quality=90&resize=556,505'
+      'Big Fat Burger',
+      'What else you need to say?',
+      'https://upload.wikimedia.org/wikipedia/commons/b/be/Burger_King_Angus_Bacon_%26_Cheese_Steak_Burger.jpg',
+      [new Ingredient('Buns', 2), new Ingredient('Meat', 1)]
     ),
   ]);
 
   recipes$ = this.recipesSubject.pipe(
-    shareReplay(1) // This is to avoid multiple subscriptions to the same observable
+    shareReplay(1), // This is to avoid multiple subscriptions to the same observable
+    map((recipes) => recipes.slice()) // to avoid mutating the original array
   );
-
-  private selectedRecipeSubject = new Subject<Recipe>();
-  selectedRecipe$ = this.selectedRecipeSubject.pipe(shareReplay(1));
 
   ngOnDestroy() {
     this.recipesSubject.complete();
-    this.selectedRecipeSubject.complete();
   }
 
   addRecipe(recipe: Recipe) {
     this.recipesSubject.next([...this.recipesSubject.value, recipe]);
   }
 
-  selectRecipe(recipe: Recipe) {
-    this.selectedRecipeSubject.next(recipe);
+  getRecipe(index: number) {
+    return this.recipesSubject.value[index];
+  }
+
+  updateRecipe(index: number, recipe: Recipe) {
+    const recipes = [...this.recipesSubject.value];
+    recipes[index] = recipe;
+    this.recipesSubject.next(recipes);
+  }
+
+  deleteRecipe(index: number) {
+    if (index === 0 && this.recipesSubject.value.length === 1) {
+      return this.recipesSubject.next([]);
+    }
+
+    this.recipesSubject.value.splice(index, 1);
+    this.recipesSubject.next(this.recipesSubject.value);
   }
 }

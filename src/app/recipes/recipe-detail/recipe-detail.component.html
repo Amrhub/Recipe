@@ -1,4 +1,4 @@
-<ng-container *ngIf="selectedRecipe$ | async as recipe">
+<ng-container *ngIf="recipe; else notFoundRecipe">
   <div class="row">
     <div class="col-xs-12">
       <img src="{{ recipe.imageURL }}" alt="" class="img-responsive" height="300" />
@@ -20,9 +20,9 @@
         </button>
 
         <ul class="dropdown-menu open">
-          <li><a href="#">To Shopping List</a></li>
-          <li><a href="#">Edit Recipe</a></li>
-          <li><a href="#">Delete Recipe</a></li>
+          <li><a (click)="onAddToShoppingList(recipe)">To Shopping List</a></li>
+          <li><a routerLink="edit">Edit Recipe</a></li>
+          <li><a (click)="onDeleteRecipe()">Delete Recipe</a></li>
         </ul>
       </div>
     </div>
@@ -35,5 +35,14 @@
 
   <div class="row">
     <div class="col-xs-12">Ingredient</div>
+    <ul class="list-group">
+      <li class="list-group-item" *ngFor="let ingredient of recipe.ingredients">
+        {{ ingredient.name }} ({{ ingredient.amount }})
+      </li>
+    </ul>
   </div>
 </ng-container>
+
+<ng-template #notFoundRecipe>
+  <div class="alert alert-danger"><strong>Oh snap!</strong> Recipe not found.</div>
+</ng-template>
