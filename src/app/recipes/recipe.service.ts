@@ -1,5 +1,5 @@
 import { Injectable, OnDestroy } from '@angular/core';
-import { BehaviorSubject, Subject, shareReplay } from 'rxjs';
+import { BehaviorSubject, Subject, map, shareReplay } from 'rxjs';
 import { Recipe } from './recipe.model';
 
 @Injectable({
@@ -22,11 +22,15 @@ export class RecipeService implements OnDestroy {
   ]);
 
   recipes$ = this.recipesSubject.pipe(
-    shareReplay(1) // This is to avoid multiple subscriptions to the same observable
+    shareReplay(1), // This is to avoid multiple subscriptions to the same observable
+    map((recipes) => [...recipes])
   );
 
   private selectedRecipeSubject = new Subject<Recipe>();
-  selectedRecipe$ = this.selectedRecipeSubject.pipe(shareReplay(1));
+  selectedRecipe$ = this.selectedRecipeSubject.pipe(
+    shareReplay(1),
+    map((recipe) => ({ ...recipe }))
+  );
 
   ngOnDestroy() {
     this.recipesSubject.complete();

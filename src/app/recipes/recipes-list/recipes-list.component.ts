@@ -15,17 +15,25 @@ export class RecipesListComponent implements OnInit {
   // recipeNames$: Observable<string[] | undefined>;
 
   ngOnInit(): void {
-    // this.recipeNames$ = this.recipes$.pipe(
-    //   map((recipes, _index) => recipes.map((recipe) => recipe.name))
-    // );
-    // setTimeout(() => {
-    //   this.recipeService.addRecipe(
-    //     new Recipe(
-    //       'Test Recipe 3',
-    //       'This is simply a Test 3',
-    //       'https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Chicken-Tikka-99647a6.jpg?quality=90&resize=556,505'
-    //     )
-    //   );
-    // }, 2000);
+    this.recipes$.pipe(map((recipes, _index) => recipes.map((recipe) => recipe.name))).subscribe(
+      (recipeNames) => {
+        console.log(recipeNames);
+      },
+      (error) => {
+        console.log(error);
+      },
+      () => {
+        console.log('Completed!');
+      }
+    );
+    setTimeout(() => {
+      this.recipeService.addRecipe(
+        new Recipe(
+          'Test Recipe 3',
+          'This is simply a Test 3',
+          'https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Chicken-Tikka-99647a6.jpg?quality=90&resize=556,505'
+        )
+      );
+    }, 2000);
   }
 }
