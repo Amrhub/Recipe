@@ -1,6 +1,7 @@
 import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 import { Recipe } from '../recipe.model';
 import { RecipeService } from '../recipe.service';
+import { Observable, map } from 'rxjs';
 
 @Component({
   selector: 'app-recipes-list',
@@ -8,9 +9,23 @@ import { RecipeService } from '../recipe.service';
   styleUrls: ['./recipes-list.component.css'],
 })
 export class RecipesListComponent implements OnInit {
-  constructor(private RecipeService: RecipeService) {}
+  constructor(private recipeService: RecipeService) {}
 
-  ngOnInit(): void {}
+  recipes$ = this.recipeService.recipes$;
+  // recipeNames$: Observable<string[] | undefined>;
 
-  recipes$ = this.RecipeService.recipes$;
+  ngOnInit(): void {
+    // this.recipeNames$ = this.recipes$.pipe(
+    //   map((recipes, _index) => recipes.map((recipe) => recipe.name))
+    // );
+    // setTimeout(() => {
+    //   this.recipeService.addRecipe(
+    //     new Recipe(
+    //       'Test Recipe 3',
+    //       'This is simply a Test 3',
+    //       'https://images.immediate.co.uk/production/volatile/sites/30/2022/08/Chicken-Tikka-99647a6.jpg?quality=90&resize=556,505'
+    //     )
+    //   );
+    // }, 2000);
+  }
 }
