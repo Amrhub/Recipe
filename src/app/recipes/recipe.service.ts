@@ -37,8 +37,16 @@ export class RecipeService implements OnDestroy {
     this.recipesSubject.next([...this.recipesSubject.value, recipe]);
   }
 
+  setRecipes(recipes: Recipe[]) {
+    this.recipesSubject.next(recipes);
+  }
+
   getRecipe(index: number) {
     return this.recipesSubject.value[index];
+  }
+
+  getRecipes() {
+    return this.recipesSubject.value.slice();
   }
 
   updateRecipe(index: number, recipe: Recipe) {
