@@ -1,3 +1,4 @@
+import { AuthService } from './../auth/auth.service';
 import { DataStorageService } from './../shared/data-storage.service';
 import { Injectable } from '@angular/core';
 import { ActivatedRouteSnapshot, Resolve, RouterStateSnapshot } from '@angular/router';
@@ -12,10 +13,13 @@ export class RecipesResolveService implements Resolve<Recipe[]> {
     private dataStorageService: DataStorageService,
     private recipeService: RecipeService
   ) {}
+  syncRetryCount = 0;
 
   resolve(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const recipes = this.recipeService.getRecipes();
-    if (recipes.length === 0) {
+
+    if (recipes.length === 0 || (this.syncRetryCount === 0 && !recipes[route.params['id']])) {
+      this.syncRetryCount++;
       return this.dataStorageService.fetchRecipes();
     } else {
       return recipes;
